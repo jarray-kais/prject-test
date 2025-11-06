@@ -58,7 +58,14 @@ const UserController = {
     },
     deleteUser : async(req, res, next) => {
         try {
-            const user = await User.findByIdAndDelete(req.params.id);
+            const userToDelete = await User.findById(req.params.id).select("role");
+            if (!userToDelete) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            if (userToDelete.role === "admin") {
+                return res.status(403).json({ message: "Forbidden: cannot delete admin users" });
+            }
+            await User.findByIdAndDelete(req.params.id);
             res.status(200).json({ message: "User deleted successfully" });
         } catch (error) {
             next(error);
