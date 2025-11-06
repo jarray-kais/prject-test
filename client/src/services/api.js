@@ -32,6 +32,12 @@ export const reviewAPI = {
   delete: (reviewId) => api.delete(`/reviews/${reviewId}`),
 };
 
+// Admin-only API
+export const adminAPI = {
+  getAllUsers: () => api.get('/users/all'),
+  deleteUser: (userId) => api.delete(`/users/delete/${userId}`),
+};
+
 export default api;
 
 
