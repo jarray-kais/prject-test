@@ -1,8 +1,7 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import InputField from '../components/InputField';
 import { authAPI } from '../services/api';
-import { StoreContext } from '../context/StoreContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +12,6 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { setUser } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -42,8 +40,6 @@ const Register = () => {
       });
 
       if (response.data.success) {
-        localStorage.setItem('userInfo', JSON.stringify(response.data.user));
-        setUser(response.data.user);
         navigate('/login');
       } else {
         setError(response.data.message || 'Erreur lors de l\'inscription');

@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const generateToken = (user) => {
-    return jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1h"});
+    return jwt.sign({id: user._id, role: user.role }, process.env.JWT_SECRET, {expiresIn: "1h"});
 };
 
 export const authMiddleware = (req, res, next) => {
@@ -25,4 +25,11 @@ export const authMiddleware = (req, res, next) => {
         req.user = decoded;
         next();
     });
+};
+
+export const isAdmin = (req, res, next) => {
+    if (req.user.role !== "admin") {
+        return res.status(403).json({ message: "Unauthorized: Admin only can access this route" });
+    }
+    next();
 };

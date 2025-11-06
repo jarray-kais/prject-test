@@ -91,6 +91,18 @@ const ProjetDetails = () => {
     setEditContent('');
   };
 
+  const handleDeleteProjet = async () => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+      return;
+    }
+    try {
+      await projetAPI.delete(id);
+      navigate('/');
+    } catch {
+      setError('Erreur lors de la suppression');
+    }
+  };
+
   if (loading) {
     return (
       <div className="container py-5 d-flex justify-content-center">
@@ -110,6 +122,7 @@ const ProjetDetails = () => {
 
   const isAuthenticated = Boolean(user);
   const isAuthor = projet.author?._id === user?._id || projet.author?.toString() === user?._id;
+  const isAdmin = user?.role === 'admin';
 
   return (
     <div className="container py-4">
@@ -124,24 +137,19 @@ const ProjetDetails = () => {
           <p className="text-muted mt-3" style={{whiteSpace: 'pre-line'}}>{projet.description}</p>
           <p className="text-muted small">Par: {projet.author?.pseudo || 'Auteur inconnu'}</p>
 
-          {isAuthor && (
+          {(isAuthor || isAdmin) && (
             <div className="d-flex gap-2 mt-3">
-              <Link to={`/projet/${id}/edit`} className="btn btn-outline-primary btn-sm">Modifier le projet</Link>
-              <button
-                onClick={async () => {
-                  if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
-                    try {
-                      await projetAPI.delete(id);
-                      navigate('/');
-                    } catch {
-                      setError('Erreur lors de la suppression');
-                    }
-                  }
-                }}
-                className="btn btn-danger btn-sm"
-              >
-                Supprimer
-              </button>
+              {isAuthor && (
+                <Link to={`/projet/${id}/edit`} className="btn btn-outline-primary btn-sm">Modifier le projet</Link>
+              )}
+              {(isAuthor || isAdmin) && (
+                <button
+                  onClick={handleDeleteProjet}
+                  className="btn btn-danger btn-sm"
+                >
+                  Supprimer
+                </button>
+              )}
             </div>
           )}
         </div>
