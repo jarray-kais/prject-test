@@ -1,12 +1,14 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { projetAPI, reviewAPI } from '../services/api';
 import { StoreContext } from '../context/StoreContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 
 const ProjetDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useContext(StoreContext);
   const [projet, setProjet] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -93,14 +95,7 @@ const ProjetDetails = () => {
 
   if (loading) {
     return (
-      <div className="container py-5 d-flex justify-content-center">
-        <div className="text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Chargement...</span>
-          </div>
-          <p className="mt-3 text-muted">Chargement...</p>
-        </div>
-      </div>
+  <LoadingSpinner />
     );
   }
 
@@ -126,7 +121,7 @@ const ProjetDetails = () => {
 
           {isAuthor && (
             <div className="d-flex gap-2 mt-3">
-              <Link to={`/projet/${id}/edit`} className="btn btn-outline-primary btn-sm">Modifier le projet</Link>
+              <Link to={`/projet/${id}/edit`} state={{ backgroundLocation: location }} className="btn btn-outline-primary btn-sm">Modifier le projet</Link>
               <button
                 onClick={async () => {
                   if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {

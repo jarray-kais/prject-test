@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -10,6 +10,8 @@ import NotFound from './pages/NotFound';
 import ProtectRoute from './components/ProtectRoute';
 
 function App() {
+  const location = useLocation();
+  const backgroundLocation = location.state?.backgroundLocation;
   return (
         <div className="app">
           <Navbar />
@@ -19,7 +21,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/projet/:id" element={<ProtectRoute><ProjetDetails /></ProtectRoute>} />
-              <Route path="/projet/:id/edit" element={<ProtectRoute><EditProjet /></ProtectRoute>} />
+              <Route path="/projet/:id/edit" element={<ProtectRoute><EditProjet backgroundLocation={backgroundLocation} /></ProtectRoute>} />
               <Route path="/projet/create" element={<ProtectRoute><CreateProjet /></ProtectRoute>} />
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
