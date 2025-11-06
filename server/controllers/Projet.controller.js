@@ -135,6 +135,7 @@ const ProjetController = {
     deleteProjet: async (req, res, next) => {
         try {
             const { id } = req.params;
+            const adminrole = req.user.role;
             // Trouver le projet et vérifier si l'utilisateur courant est l'auteur
             const projet = await Projet.findById(id);
             if (!projet) {
@@ -143,9 +144,8 @@ const ProjetController = {
                     message: "Projet not found",
                 });
             }
-            console.log(projet.author.toString()) 
-            console.log(req.user.id.toString()) 
-            if (projet.author.toString() !== req.user.id.toString()) {
+            
+            if (adminrole !== "admin" && projet.author.toString() !== req.user.id.toString()) {
                 return res.status(403).json({
                   success: false,
                   message: "Unauthorized: you can only delete your own projects",
