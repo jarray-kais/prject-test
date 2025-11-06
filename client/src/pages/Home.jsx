@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { projetAPI } from '../services/api';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Home = () => {
   const [projets, setProjets] = useState([]);
@@ -51,14 +52,7 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="container py-5 d-flex justify-content-center">
-        <div className="text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Chargement...</span>
-          </div>
-          <p className="mt-3 text-muted">Chargement...</p>
-        </div>
-      </div>
+   <LoadingSpinner />
     );
   }
 
