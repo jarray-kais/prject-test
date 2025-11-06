@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { projetAPI } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -6,6 +6,8 @@ import LoadingSpinner from '../components/LoadingSpinner';
 const Home = () => {
   const [projets, setProjets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPageChanging, setIsPageChanging] = useState(false);
+  const requestIdRef = useRef(0);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -14,21 +16,30 @@ const Home = () => {
   });
 
   useEffect(() => {
-    fetchProjets(1);
+    fetchProjets(1, true);
   }, []);
 
-  const fetchProjets = async (page) => {
+  const fetchProjets = async (page, isInitial = false) => {
     try {
-      setLoading(true);
+      const requestId = ++requestIdRef.current;
+      if (isInitial) {
+        setLoading(true);
+      } else {
+        setIsPageChanging(true);
+      }
       const response = await projetAPI.getAll(page);
-      if (response.data.success) {
+      if (response.data.success && requestId === requestIdRef.current) {
         setProjets(response.data.projets);
         setPagination(response.data.pagination);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des projets:', error);
     } finally {
-      setLoading(false);
+      if (isInitial) {
+        setLoading(false);
+      } else {
+        setIsPageChanging(false);
+      }
     }
   };
 
@@ -57,6 +68,7 @@ const Home = () => {
         </div>
       ) : (
         <>
+          
           <div className="row g-4">
             {projets.map((projet) => (
               <div key={projet._id} className="col-12 col-sm-6 col-lg-4">
@@ -81,25 +93,43 @@ const Home = () => {
 
           <nav className="d-flex justify-content-center mt-4" aria-label="Pagination des projets">
             <ul className="pagination">
-              <li className={`page-item ${!pagination.hasPrevPage ? 'disabled' : ''}`}>
+              <li className={`page-item ${!pagination.hasPrevPage || isPageChanging ? 'disabled' : ''}`}>
                 <button
                   className="page-link"
                   onClick={() => handlePageChange(pagination.currentPage - 1)}
-                  disabled={!pagination.hasPrevPage}
+                  disabled={!pagination.hasPrevPage || isPageChanging}
                 >
                   Précédent
                 </button>
               </li>
-              <li className="page-item disabled">
-                <span className="page-link">
-                  Page {pagination.currentPage} sur {pagination.totalPages}
-                </span>
-              </li>
-              <li className={`page-item ${!pagination.hasNextPage ? 'disabled' : ''}`}>
+              {/* afficher uniquement la page précédente, actuelle et suivante */}
+              {pagination.totalPages > 1 && (
+                <>
+                  {(() => {
+                    const items = [];
+                    const current = pagination.currentPage;
+                    const total = pagination.totalPages;
+                    const candidates = [current - 1, current, current + 1];
+
+                    candidates.forEach((p) => {
+                      if (p >= 1 && p <= total) {
+                        items.push(
+                          <li key={p} className={`page-item ${p === current ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(p)} disabled={isPageChanging}>{p}</button>
+                          </li>
+                        );
+                      }
+                    });
+
+                    return items;
+                  })()}
+                </>
+              )}
+              <li className={`page-item ${!pagination.hasNextPage || isPageChanging ? 'disabled' : ''}`}>
                 <button
                   className="page-link"
                   onClick={() => handlePageChange(pagination.currentPage + 1)}
-                  disabled={!pagination.hasNextPage}
+                  disabled={!pagination.hasNextPage || isPageChanging}
                 >
                   Suivant
                 </button>

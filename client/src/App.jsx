@@ -8,6 +8,8 @@ import CreateProjet from './pages/CreateProjet';
 import EditProjet from './pages/EditProjet';
 import NotFound from './pages/NotFound';
 import ProtectRoute from './components/ProtectRoute';
+import AdminRoute from './components/AdminRoute';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const location = useLocation();
@@ -23,6 +25,7 @@ function App() {
               <Route path="/projet/:id" element={<ProtectRoute><ProjetDetails /></ProtectRoute>} />
               <Route path="/projet/:id/edit" element={<ProtectRoute><EditProjet backgroundLocation={backgroundLocation} /></ProtectRoute>} />
               <Route path="/projet/create" element={<ProtectRoute><CreateProjet /></ProtectRoute>} />
+              <Route path="/admin" element={<ProtectRoute><AdminRoute><AdminDashboard /></AdminRoute></ProtectRoute>} />
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>

@@ -38,6 +38,13 @@ const Header = () => {
                   </Link>
                 </li>
               )}
+              {user && user.role === "admin" && (
+                <li className="nav-item">
+                  <Link to="/admin" className="nav-link">
+                 Dashboard Admin
+                  </Link>
+                </li>
+              )}
               {user ? (
                 <li className="nav-item dropdown">
                   <button

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import bcrypt from "bcryptjs"; 
+import bcrypt from "bcryptjs";
 
 
 
@@ -18,6 +18,12 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
+    role : {
+      type : String,
+      enum : ["admin", "user"],
+      default: "user",
+      message: "{VALUE} is not supported"
+    }
   }, { timestamps: true });
   
   UserSchema.virtual("confirmPassword")
