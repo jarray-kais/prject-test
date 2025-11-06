@@ -96,11 +96,29 @@ const Home = () => {
                   Précédent
                 </button>
               </li>
-              <li className="page-item disabled">
-                <span className="page-link">
-                  Page {pagination.currentPage} sur {pagination.totalPages}
-                </span>
-              </li>
+              {/* afficher uniquement la page précédente, actuelle et suivante */}
+              {pagination.totalPages > 1 && (
+                <>
+                  {(() => {
+                    const items = [];
+                    const current = pagination.currentPage;
+                    const total = pagination.totalPages;
+                    const candidates = [current - 1, current, current + 1];
+
+                    candidates.forEach((p) => {
+                      if (p >= 1 && p <= total) {
+                        items.push(
+                          <li key={p} className={`page-item ${p === current ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(p)}>{p}</button>
+                          </li>
+                        );
+                      }
+                    });
+
+                    return items;
+                  })()}
+                </>
+              )}
               <li className={`page-item ${!pagination.hasNextPage ? 'disabled' : ''}`}>
                 <button
                   className="page-link"
