@@ -1,7 +1,9 @@
 import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/util.js";
-import mongoose from 'mongoose';
+import Projet from "../models/Projet.model.js";
+import mongoose from "mongoose";
+
 
 
 
@@ -72,65 +74,37 @@ const UserController = {
             next(error);
         }
     },
-    getAllprojetAndReviewByUser : async(req , res , next) =>{
-        try {
-            const id  = req.user.id; 
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-              return res.status(400).json({ success: false, message: "Invalid user id" });
+      getUserProjectsWithReviews: async (req, res, next) => {
+      try {
+        const userId = req.user.id;
+        console.log(userId);
+    
+        const projects = await Projet.aggregate([
+          { $match: { author: new mongoose.Types.ObjectId(userId) } },
+          {
+            $lookup: {
+              from: 'reviews',           
+              localField: '_id',         
+              foreignField: 'projet',    
+              as: 'reviews'      
             }
-            const objectId = new mongoose.Types.ObjectId(id);
-
-            const result = await User.aggregate([
-              { $match: { _id: objectId } }, 
-              {
-                $lookup: {
-                  from: 'projets',
-                  localField: '_id',
-                  foreignField: 'author',
-                  as: 'projects'
-                }
-              },
-              {
-                $lookup: {
-                  from: 'reviews',
-                  localField: '_id',
-                  foreignField: 'author',
-                  as: 'reviews'
-                }
-              },
-              {
-                $project: {
-                    pseudo: 1,
-                    email: 1,
-                    role: 1,
-                    projects: {
-                      _id: 1,
-                      title: 1,
-                      category: 1,
-                      description: 1,
-                    },
-                    reviews: {
-                      _id: 1,
-                      content: 1,
-                      projet: 1,
-                    }
-                }
-              }
-            ]);
-
-            if (!result.length) {
-              return res.status(404).json({ success: false, message: "Utilisateur non trouvé" });
-            }
-
-            res.status(200).json({ success: true, data: result[0] });
-
-          } catch (error) {
-            console.error(error);
-            next(error);
           }
+        ]);
+    
+        if (!projects.length) {
+          return res.status(404).json({ message: 'Aucun projet trouvé pour cet utilisateur' });
         }
-
-
+    
+        res.status(200).json({
+          success: true,
+          message: 'Projets et avis récupérés avec succès',
+          projects,
+        });
+      } catch (error) {
+        next(error);
+      }
+    }
+    
 
 };
 export default UserController;

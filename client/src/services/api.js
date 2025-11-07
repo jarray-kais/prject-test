@@ -12,7 +12,8 @@ export const authAPI = {
   register: (data) => api.post('/users/register', data),
   login: (data) => api.post('/users/login', data),
   logout: () => api.post('/users/logout'),
-  checkAuth: () => api.get('/check-auth')
+  checkAuth: () => api.get('/check-auth'),
+  getMeWithProjectsReviews: () => api.get('/users/'),
 };
 
 // API Projets

@@ -174,7 +174,9 @@ const ProjetController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+
+    
 };
 
 export default ProjetController;
