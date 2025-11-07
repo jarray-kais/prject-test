@@ -111,13 +111,10 @@ const EditProjetModal = ({ id, show, onHide, onSubmit }) => {
       <div className="container py-4">
         <div className="row justify-content-center">
           <div className="col-12 col-md-10 col-lg-8">
-            <div className="card shadow-sm">
+              <div className="card shadow-sm">
               <div className="card-body p-4">
-                {loading ? (
-                  <div className="d-flex justify-content-center py-4">
-                    <LoadingSpinner />
-                  </div>
-                ) : (
+                <LoadingSpinner loading={loading} />
+                {!loading && (
                   <form onSubmit={handleSubmit}>
                     <InputField
                       id="title"
