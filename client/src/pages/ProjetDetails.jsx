@@ -21,18 +21,21 @@ const ProjetDetails = () => {
   const fetchProjet = useCallback(async () => {
     try {
       setLoading(true);
+      setError("");
       const response = await projetAPI.getById(id);
-      if (response.data.success) {
+      if (response?.data?.success) {
         setProjet(response.data.projet);
         setReviews(response.data.reviews || []);
+        setLoading(false)
+      } else {
+        setError("Erreur lors du chargement du projet");
       }
     } catch (error) {
       console.error("Erreur:", error);
+      setError(error.response?.data?.message || "Erreur lors du chargement du projet");
       if (error.response?.status === 404) {
         navigate("/404");
       }
-    } finally {
-      setLoading(false);
     }
   }, [id, navigate]);
 
@@ -138,28 +141,28 @@ const ProjetDetails = () => {
     setShowEditModal(false);
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (!projet) {
-    return null;
-  }
-
   const isAuthenticated = Boolean(user);
   const isAuthor =
-    projet.author?._id === user?._id || projet.author?.toString() === user?._id;
+    projet?.author?._id === user?._id || projet?.author?.toString() === user?._id;
   const isAdmin = user?.role === "admin";
 
   return (
     <div className="container py-4">
-      <div className="mb-3">
-        <Link to="/" className="btn btn-link p-0">
-          {" "}
-          ←Retour à la liste{" "}
-        </Link>{" "}
-      </div>
-      <div className="card shadow-sm mb-4">
+      <LoadingSpinner loading={loading} />
+      {error && !loading && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
+      {!loading && projet && (
+        <>
+          <div className="mb-3">
+            <Link to="/" className="btn btn-link p-0">
+              {" "}
+              ←Retour à la liste{" "}
+            </Link>{" "}
+          </div>
+          <div className="card shadow-sm mb-4">
         <div className="card-body">
           <h1 className="h3"> {projet.title} </h1>{" "}
           <span className="badge bg-secondary me-2"> {projet.category} </span>{" "}
@@ -293,12 +296,14 @@ const ProjetDetails = () => {
           </div>{" "}
         </div>{" "}
       </div>
-      <EditProjetModal
-        id={id}
-        show={showEditModal}
-        onHide={handleEditClose}
-        onSubmit={handleEditSubmit}
-      />{" "}
+          <EditProjetModal
+            id={id}
+            show={showEditModal}
+            onHide={handleEditClose}
+            onSubmit={handleEditSubmit}
+          />{" "}
+        </>
+      )}
     </div>
   );
 };
