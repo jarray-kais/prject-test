@@ -1,6 +1,7 @@
-import User from "../models/user.model.js";
+import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/util.js";
+import mongoose from 'mongoose';
 
 
 
@@ -70,7 +71,65 @@ const UserController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+    getAllprojetAndReviewByUser : async(req , res , next) =>{
+        try {
+            const id  = req.user.id; 
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+              return res.status(400).json({ success: false, message: "Invalid user id" });
+            }
+            const objectId = new mongoose.Types.ObjectId(id);
+
+            const result = await User.aggregate([
+              { $match: { _id: objectId } }, 
+              {
+                $lookup: {
+                  from: 'projets',
+                  localField: '_id',
+                  foreignField: 'author',
+                  as: 'projects'
+                }
+              },
+              {
+                $lookup: {
+                  from: 'reviews',
+                  localField: '_id',
+                  foreignField: 'author',
+                  as: 'reviews'
+                }
+              },
+              {
+                $project: {
+                    pseudo: 1,
+                    email: 1,
+                    role: 1,
+                    projects: {
+                      _id: 1,
+                      title: 1,
+                      category: 1,
+                      description: 1,
+                    },
+                    reviews: {
+                      _id: 1,
+                      content: 1,
+                      projet: 1,
+                    }
+                }
+              }
+            ]);
+
+            if (!result.length) {
+              return res.status(404).json({ success: false, message: "Utilisateur non trouvé" });
+            }
+
+            res.status(200).json({ success: true, data: result[0] });
+
+          } catch (error) {
+            console.error(error);
+            next(error);
+          }
+        }
+
 
 
 };
