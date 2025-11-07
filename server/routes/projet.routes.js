@@ -10,6 +10,9 @@ projetRouter.post("/", authMiddleware, ProjetController.createProjet);
 // Lire tous les projets (public)
 projetRouter.get("/", ProjetController.getAllProjets);
 
+// Récupérer les catégories (public)
+projetRouter.get("/categories",authMiddleware, ProjetController.getCategories);
+
 // Lire un projet + reviews (public)
 projetRouter.get("/:id", ProjetController.getProjetById);
 
