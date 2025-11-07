@@ -22,6 +22,7 @@ export const projetAPI = {
   create: (data) => api.post('/projets', data),
   update: (id, data) => api.put(`/projets/${id}`, data),
   delete: (id) => api.delete(`/projets/${id}`),
+  getCategories: () => api.get('/projets/categories'),
 };
 
 // API Reviews
