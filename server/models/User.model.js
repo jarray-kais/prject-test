@@ -23,7 +23,7 @@ const UserSchema = new Schema({
       enum : ["admin", "user"],
       default: "user",
       message: "{VALUE} is not supported"
-    }
+    },
   }, { timestamps: true });
   
   UserSchema.virtual("confirmPassword")

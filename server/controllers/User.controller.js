@@ -1,6 +1,9 @@
-import User from "../models/user.model.js";
+import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/util.js";
+import Projet from "../models/Projet.model.js";
+import mongoose from "mongoose";
+
 
 
 
@@ -70,8 +73,38 @@ const UserController = {
         } catch (error) {
             next(error);
         }
+    },
+      getUserProjectsWithReviews: async (req, res, next) => {
+      try {
+        const userId = req.user.id;
+        console.log(userId);
+    
+        const projects = await Projet.aggregate([
+          { $match: { author: new mongoose.Types.ObjectId(userId) } },
+          {
+            $lookup: {
+              from: 'reviews',           
+              localField: '_id',         
+              foreignField: 'projet',    
+              as: 'reviews'      
+            }
+          }
+        ]);
+    
+        if (!projects.length) {
+          return res.status(404).json({ message: 'Aucun projet trouvé pour cet utilisateur' });
+        }
+    
+        res.status(200).json({
+          success: true,
+          message: 'Projets et avis récupérés avec succès',
+          projects,
+        });
+      } catch (error) {
+        next(error);
+      }
     }
-
+    
 
 };
 export default UserController;

@@ -10,5 +10,6 @@ userRouter.route("/login").post(UserControler.login);
 userRouter.route("/logout").post(UserControler.logout)
 userRouter.route("/all").get(authMiddleware, isAdmin, UserControler.getAllUsers)
 userRouter.route("/delete/:id").delete(authMiddleware, isAdmin, UserControler.deleteUser)
+userRouter.route("/").get(authMiddleware , UserControler.getUserProjectsWithReviews)
 
 export default userRouter;

@@ -22,11 +22,15 @@ const ProtectRoute = ({children}) => {
             setTimeout(() => navigate("/login"), 1000);
         })
     },[navigate])
-    if (isLoading) return <LoadingSpinner />;
-
+    
     if (redirectMessage) return <p>{redirectMessage}</p> ;
   
-    return checkauth && (checkauth.authenticated || checkauth.authorized) ? children : null;
+    return (
+        <>
+            <LoadingSpinner loading={isLoading} />
+            {!isLoading && checkauth && (checkauth.authenticated || checkauth.authorized) ? children : null}
+        </>
+    );
 }
 
 export default ProtectRoute

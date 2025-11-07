@@ -12,7 +12,8 @@ export const authAPI = {
   register: (data) => api.post('/users/register', data),
   login: (data) => api.post('/users/login', data),
   logout: () => api.post('/users/logout'),
-  checkAuth: () => api.get('/check-auth')
+  checkAuth: () => api.get('/check-auth'),
+  getMeWithProjectsReviews: () => api.get('/users/'),
 };
 
 // API Projets
@@ -22,6 +23,7 @@ export const projetAPI = {
   create: (data) => api.post('/projets', data),
   update: (id, data) => api.put(`/projets/${id}`, data),
   delete: (id) => api.delete(`/projets/${id}`),
+  getCategories: () => api.get('/projets/categories'),
 };
 
 // API Reviews

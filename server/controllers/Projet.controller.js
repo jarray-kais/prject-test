@@ -161,7 +161,22 @@ const ProjetController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+
+    // Récupérer la liste des catégories disponibles (données dynamiques)
+    getCategories: async (req, res, next) => {
+        try {
+            const categories = await Projet.distinct("category");
+            res.status(200).json({
+                success: true,
+                categories,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    
 };
 
 export default ProjetController;

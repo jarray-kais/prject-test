@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { adminAPI } from '../services/api';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -37,9 +38,8 @@ const AdminDashboard = () => {
     <div className="container py-4">
       <h1 className="h3 mb-3">Tableau de bord administrateur</h1>
       {error && <div className="alert alert-danger">{error}</div>}
-      {loading ? (
-        <p>Chargement...</p>
-      ) : (
+      <LoadingSpinner loading={loading} />
+      {!loading && (
         <div className="card">
           <div className="card-body">
             <div className="d-flex justify-content-between align-items-center mb-3">

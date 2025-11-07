@@ -50,23 +50,18 @@ const Home = () => {
     }
   };
 
-  if (loading) {
-    return (
-   <LoadingSpinner />
-    );
-  }
-
   return (
     <div className="container py-4">
+      <LoadingSpinner loading={loading} />
       <div className="d-flex align-items-center justify-content-between mb-4">
         <h1 className="h3 m-0">Liste des Projets</h1>
       </div>
 
-      {projets.length === 0 ? (
+      {!loading && projets.length === 0 ? (
         <div className="alert alert-info text-center" role="alert">
           Aucun projet disponible
         </div>
-      ) : (
+      ) : !loading ? (
         <>
           
           <div className="row g-4">
@@ -137,7 +132,7 @@ const Home = () => {
             </ul>
           </nav>
         </>
-      )}
+      ) : null}
     </div>
   );
 };
