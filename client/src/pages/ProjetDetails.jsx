@@ -165,7 +165,7 @@ const ProjetDetails = () => {
           <div className="card shadow-sm mb-4">
         <div className="card-body">
           <h1 className="h3"> {projet.title} </h1>{" "}
-          <span className="badge bg-secondary me-2"> {projet.category} </span>{" "}
+          <span className="badge bg-secondary me-2"> {projet?.category_id?.name} </span>{" "}
           <p
             className="text-muted mt-3"
             style={{
