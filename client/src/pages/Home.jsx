@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { projetAPI } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Pagination from '../components/Pagination';
 
 const Home = () => {
   const [projets, setProjets] = useState([]);
@@ -70,7 +71,7 @@ const Home = () => {
                 <div className="card h-100 shadow-sm">
                   <div className="card-body d-flex flex-column">
                     <h2 className="h5 card-title mb-2">{projet.title}</h2>
-                    <span className="badge bg-secondary align-self-start mb-2">{projet.category}</span>
+                    <span className="badge bg-secondary align-self-start mb-2">{projet?.category_id?.name}</span>
                     <p className="card-text text-muted flex-grow-1" style={{whiteSpace: 'pre-line'}}>
                       {projet.description}
                     </p>
@@ -86,51 +87,11 @@ const Home = () => {
             ))}
           </div>
 
-          <nav className="d-flex justify-content-center mt-4" aria-label="Pagination des projets">
-            <ul className="pagination">
-              <li className={`page-item ${!pagination.hasPrevPage || isPageChanging ? 'disabled' : ''}`}>
-                <button
-                  className="page-link"
-                  onClick={() => handlePageChange(pagination.currentPage - 1)}
-                  disabled={!pagination.hasPrevPage || isPageChanging}
-                >
-                  Précédent
-                </button>
-              </li>
-              {/* afficher uniquement la page précédente, actuelle et suivante */}
-              {pagination.totalPages > 1 && (
-                <>
-                  {(() => {
-                    const items = [];
-                    const current = pagination.currentPage;
-                    const total = pagination.totalPages;
-                    const candidates = [current - 1, current, current + 1];
-
-                    candidates.forEach((p) => {
-                      if (p >= 1 && p <= total) {
-                        items.push(
-                          <li key={p} className={`page-item ${p === current ? 'active' : ''}`}>
-                            <button className="page-link" onClick={() => handlePageChange(p)} disabled={isPageChanging}>{p}</button>
-                          </li>
-                        );
-                      }
-                    });
-
-                    return items;
-                  })()}
-                </>
-              )}
-              <li className={`page-item ${!pagination.hasNextPage || isPageChanging ? 'disabled' : ''}`}>
-                <button
-                  className="page-link"
-                  onClick={() => handlePageChange(pagination.currentPage + 1)}
-                  disabled={!pagination.hasNextPage || isPageChanging}
-                >
-                  Suivant
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <Pagination
+            pagination={pagination}
+            isPageChanging={isPageChanging}
+            handlePageChange={handlePageChange}
+          />
         </>
       ) : null}
     </div>

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { projetAPI } from '../services/api';
 import InputField from '../components/InputField';
 import { StoreContext } from '../context/StoreContext';
+import { useEffect } from 'react';
 
 const CreateProjet = () => {
   const navigate = useNavigate();
@@ -14,8 +15,25 @@ const CreateProjet = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [categories , setCategories] = useState([]);
+  const [categoryError, setCategoryError] = useState('');
 
-  const categories = ['Web Development', 'Mobile Apps', 'Jeux Vidéo', 'Autres'];
+  // Récupérer les catégories disponibles
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await projetAPI.getCategories();
+        if (response.data.success) {
+          setCategories(response.data.categories);
+        }
+      } catch (error) {
+        setCategoryError(error.response?.data?.message || 'Erreur lors de la récupération des catégories');
+      }
+    };
+    fetchCategories();
+  }, []);
+
+ 
 
   const handleChange = (e) => {
     setFormData({
@@ -27,7 +45,7 @@ const CreateProjet = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+    setCategoryError('');
 
     setLoading(true);
     try {
@@ -62,6 +80,7 @@ const CreateProjet = () => {
             <div className="card-body p-4">
               <h1 className="h4 mb-3">Créer un nouveau projet</h1>
               {error && <div className="alert alert-danger" role="alert">{error}</div>}
+              {categoryError && <div className="alert alert-danger" role="alert">{categoryError}</div>}
               <form onSubmit={handleSubmit}>
                 <InputField
                   id="title"
