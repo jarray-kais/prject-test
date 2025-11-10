@@ -77,7 +77,6 @@ const UserController = {
       getUserProjectsWithReviews: async (req, res, next) => {
       try {
         const userId = req.user.id;
-        console.log(userId);
     
         const projects = await Projet.aggregate([
           { $match: { author: new mongoose.Types.ObjectId(userId) } },
