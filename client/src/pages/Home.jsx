@@ -70,7 +70,7 @@ const Home = () => {
                 <div className="card h-100 shadow-sm">
                   <div className="card-body d-flex flex-column">
                     <h2 className="h5 card-title mb-2">{projet.title}</h2>
-                    <span className="badge bg-secondary align-self-start mb-2">{projet.category}</span>
+                    <span className="badge bg-secondary align-self-start mb-2">{projet?.category_id?.name}</span>
                     <p className="card-text text-muted flex-grow-1" style={{whiteSpace: 'pre-line'}}>
                       {projet.description}
                     </p>
